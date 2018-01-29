@@ -226,7 +226,6 @@ namespace BarrageDemo
                 animation.To = 0;
                 animation.Duration = TimeSpan.FromSeconds(initspeed);
                 animation.AutoReverse = false;
-                animation.RepeatBehavior = RepeatBehavior.Forever;
                 animation.Completed += (object sender, EventArgs e) =>
                 {
                     canvas.Children.Remove(textblock);
