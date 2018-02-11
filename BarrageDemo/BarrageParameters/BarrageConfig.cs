@@ -170,7 +170,7 @@ namespace BarrageDemo.BarrageParameters
             try
             {
                 //todo 这里调用自己的服务器的弹幕接口
-                //建议不要一次性把信息都读过来，客户端超过X条未显示弹幕的时候，跳过读取信息的步骤，静待弹幕刷去一些再读取接口数据
+                //建议不要一次性把弹幕从服务器都读过来，客户端超过X条未显示弹幕的时候，跳过读取接口的步骤，静待弹幕刷去一些再读取接口数据
                 //get请求调用服务接口
                 //string apiUrl = ConfigurationManager.AppSettings["apiUrl"];
                 //HttpClient client = new HttpClient();
