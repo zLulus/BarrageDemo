@@ -4,9 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BarrageDemo"
-        mc:Ignorable="d" Name="hahaWindow" Loaded="Window_Loaded" ResizeMode="NoResize" Top="0" Left="0" MouseLeftButtonDown="hahaWindow_MouseLeftButtonDown"
-        Title="积微大屏" WindowStartupLocation="Manual"  WindowStyle="None"  AllowsTransparency="True" Background="Transparent" WindowState="Normal">
-    <Canvas Name="canvas">
-
-    </Canvas>
+        xmlns:usercontrols="clr-namespace:BarrageDemo.UserControls"
+        mc:Ignorable="d" Name="hahaWindow" ResizeMode="NoResize" Top="0" Left="0" MouseLeftButtonDown="hahaWindow_MouseLeftButtonDown"
+        Title="弹幕" WindowStartupLocation="Manual"  WindowStyle="None"  AllowsTransparency="True" Background="Transparent" WindowState="Normal">
+    <usercontrols:BarrageUserControl></usercontrols:BarrageUserControl>
 </Window>

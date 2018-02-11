@@ -1,0 +1,11 @@
+﻿<UserControl x:Class="BarrageDemo.UserControls.BarrageUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:BarrageDemo.UserControls" Loaded="Barrage_Loaded"
+             mc:Ignorable="d" Name="Barrage" Background="Transparent">
+    <Canvas Name="canvas">
+
+    </Canvas>
+</UserControl>
