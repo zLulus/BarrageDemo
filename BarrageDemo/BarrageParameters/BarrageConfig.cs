@@ -54,7 +54,7 @@ namespace BarrageDemo.BarrageParameters
         /// </summary>
         private List<MessageInformation> messages;
         /// <summary>
-        /// 是否是开发者模式
+        /// 是否是开发者模式(如果是开发者模式则会自动产生弹幕)
         /// </summary>
         private bool isDevelopMode;
         private Canvas canvas;
@@ -108,34 +108,51 @@ namespace BarrageDemo.BarrageParameters
         private void InitializeColors()
         {
             colorList = new List<Color>();
-            colorList.Add(Color.FromRgb(255, 255, 255));
-            colorList.Add(Color.FromRgb(0, 0, 0));
-            colorList.Add(Color.FromRgb(0, 255, 0));
-            colorList.Add(Color.FromRgb(0, 0, 255));
+            var colors = ConfigurationManager.AppSettings["colors"];
+            var colorArray = colors.Split(';');
+            //防止最后一个为空
+            if (string.IsNullOrEmpty(colorArray[colorArray.Count() - 1]))
+            {
+                colorArray = colorArray.Take(colorArray.Count() - 1).ToArray();
+            }
+            foreach(var color in colorArray)
+            {
+                var colorRGB = color.Split(',');
+                var r = byte.Parse(colorRGB[0]);
+                var g = byte.Parse(colorRGB[1]);
+                var b = byte.Parse(colorRGB[2]);
+                colorList.Add(Color.FromRgb(r, g, b));
+            }
 
-            colorList.Add(Color.FromRgb(0, 0, 102));
-            colorList.Add(Color.FromRgb(0, 0, 204));
-            colorList.Add(Color.FromRgb(153, 0, 0));
-            colorList.Add(Color.FromRgb(153, 0, 102));
-            colorList.Add(Color.FromRgb(153, 0, 204));
+            //这里方便你们看初始化的颜色有哪里
+            //colorList.Add(Color.FromRgb(255, 255, 255));
+            //colorList.Add(Color.FromRgb(0, 0, 0));
+            //colorList.Add(Color.FromRgb(0, 255, 0));
+            //colorList.Add(Color.FromRgb(0, 0, 255));
 
-            colorList.Add(Color.FromRgb(0, 255, 102));
-            colorList.Add(Color.FromRgb(0, 255, 204));
-            colorList.Add(Color.FromRgb(153, 255, 0));
-            colorList.Add(Color.FromRgb(153, 255, 102));
-            colorList.Add(Color.FromRgb(153, 255, 204));
+            //colorList.Add(Color.FromRgb(0, 0, 102));
+            //colorList.Add(Color.FromRgb(0, 0, 204));
+            //colorList.Add(Color.FromRgb(153, 0, 0));
+            //colorList.Add(Color.FromRgb(153, 0, 102));
+            //colorList.Add(Color.FromRgb(153, 0, 204));
 
-            colorList.Add(Color.FromRgb(255, 0, 0));
-            colorList.Add(Color.FromRgb(102, 0, 102));
-            colorList.Add(Color.FromRgb(102, 0, 204));
-            colorList.Add(Color.FromRgb(255, 0, 102));
-            colorList.Add(Color.FromRgb(255, 0, 204));
+            //colorList.Add(Color.FromRgb(0, 255, 102));
+            //colorList.Add(Color.FromRgb(0, 255, 204));
+            //colorList.Add(Color.FromRgb(153, 255, 0));
+            //colorList.Add(Color.FromRgb(153, 255, 102));
+            //colorList.Add(Color.FromRgb(153, 255, 204));
 
-            colorList.Add(Color.FromRgb(102, 255, 102));
-            colorList.Add(Color.FromRgb(102, 255, 204));
-            colorList.Add(Color.FromRgb(255, 255, 0));
-            colorList.Add(Color.FromRgb(255, 255, 102));
-            colorList.Add(Color.FromRgb(255, 255, 204));
+            //colorList.Add(Color.FromRgb(255, 0, 0));
+            //colorList.Add(Color.FromRgb(102, 0, 102));
+            //colorList.Add(Color.FromRgb(102, 0, 204));
+            //colorList.Add(Color.FromRgb(255, 0, 102));
+            //colorList.Add(Color.FromRgb(255, 0, 204));
+
+            //colorList.Add(Color.FromRgb(102, 255, 102));
+            //colorList.Add(Color.FromRgb(102, 255, 204));
+            //colorList.Add(Color.FromRgb(255, 255, 0));
+            //colorList.Add(Color.FromRgb(255, 255, 102));
+            //colorList.Add(Color.FromRgb(255, 255, 204));
         }
 
         #endregion

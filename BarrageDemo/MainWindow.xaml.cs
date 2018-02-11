@@ -28,6 +28,7 @@ namespace BarrageDemo
         public MainWindow()
         {
             InitializeComponent();
+            //弹幕撑满屏幕宽度
             hahaWindow.Width = System.Windows.SystemParameters.PrimaryScreenWidth;
             //设置弹幕高度
             hahaWindow.Height = int.Parse(ConfigurationManager.AppSettings["height"]);
