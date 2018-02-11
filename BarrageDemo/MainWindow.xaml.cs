@@ -1,6 +1,7 @@
 ﻿using LTM.WeiXin.WPF.Models;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,11 +27,11 @@ namespace BarrageDemo
         /// <summary>
         /// 每行的起始高度
         /// </summary>
-        private List<double> heightList;
+        private List<decimal> heightList;
         /// <summary>
         /// 每行的弹幕未显示长度
         /// </summary>
-        private List<double> lengthList;
+        private List<decimal> lengthList;
         /// <summary>
         /// 当前可以加弹幕的位置（行数）集合
         /// </summary>
@@ -45,9 +46,30 @@ namespace BarrageDemo
         /// <summary>
         /// 弹幕行数
         /// </summary>
-        private int rowCount = 3;
+        private int rowCount;
+        /// <summary>
+        /// 每次循环时字幕的显示（减小lengthList）的速度
+        /// </summary>
+        private decimal reduceSpeed;
+        /// <summary>
+        /// 单个弹幕的结束时间
+        /// </summary>
+        private double initFinishTime;
+        /// <summary>
+        /// 弹幕字体大小
+        /// </summary>
+        private double fontSize;
+        /// <summary>
+        /// 弹幕总高度
+        /// </summary>
+        private int height;
+
         private bool isOver;
         private object locker;
+        /// <summary>
+        /// 是否是开发者模式
+        /// </summary>
+        private bool isDevelopMode;
 
         public MainWindow()
         {
@@ -86,7 +108,16 @@ namespace BarrageDemo
 
             messages = new List<MessageInformation>();
             random = new Random();
-            hahaWindow.Width = System.Windows.SystemParameters.PrimaryScreenWidth;
+            hahaWindow.Width =System.Windows.SystemParameters.PrimaryScreenWidth;
+            rowCount = int.Parse(ConfigurationManager.AppSettings["rowCount"]);
+            reduceSpeed = decimal.Parse(ConfigurationManager.AppSettings["reduceSpeed"]);
+            initFinishTime = double.Parse(ConfigurationManager.AppSettings["initFinishTime"]);
+            fontSize = double.Parse(ConfigurationManager.AppSettings["fontSize"]);
+            height = int.Parse(ConfigurationManager.AppSettings["height"]);
+            isDevelopMode = bool.Parse(ConfigurationManager.AppSettings["isDevelopMode"]);
+
+            //设置弹幕高度
+            hahaWindow.Height = height;
         }
 
         public void ShowMessage(object sender, EventArgs e)
@@ -94,13 +125,13 @@ namespace BarrageDemo
             //如果时间间隔太短，可能出现字幕叠加，是因为同一时间几个计时器都在用数据 ->lock
             if (isOver)
             {
+                lock (locker)
+                {
+                    isOver = false;
+                }
                 //异步解决卡顿的问题
                 Task.Run(() =>
                 {
-                    lock (locker)
-                    {
-                        isOver = false;
-                    }
                     //非UI线程调用UI组件
                     System.Windows.Application.Current.Dispatcher.Invoke(async () =>
                     {
@@ -109,15 +140,13 @@ namespace BarrageDemo
                         ReduceLengthList();
                         //显示弹幕
                         Barrage(GetTopThreeMessages());
-                        lock (locker)
-                        {
-                            isOver = true;
-                        }
                     });
                 });
+                lock (locker)
+                {
+                    isOver = true;
+                }
             }
-
-
         }
 
         /// <summary>
@@ -130,7 +159,7 @@ namespace BarrageDemo
                 if (lengthList[i] > 0)
                 {
                     //这里根据动画的速度调节，每个计时器的间隔走了X个字
-                    lengthList[i] -= 0.5;
+                    lengthList[i] -= reduceSpeed;
                 }
                 //减得过多了，重置为0，认为该行已展示完成
                 if (lengthList[i] < 0)
@@ -145,18 +174,71 @@ namespace BarrageDemo
         /// </summary>
         private async Task GetMessages()
         {
-            GetMessageInformationResult newMessages = new GetMessageInformationResult();
-            newMessages.result = new List<MessageInformation>();
-            newMessages.result.Add(new MessageInformation() { content = "你们的" });
-            newMessages.result.Add(new MessageInformation() { content = "生活" });
-            newMessages.result.Add(new MessageInformation() { content = "真丰富" });
-            newMessages.result.Add(new MessageInformation() { content = "不像我" });
-            newMessages.result.Add(new MessageInformation() { content = "帅" });
-            newMessages.result.Add(new MessageInformation() { content = "字" });
-            newMessages.result.Add(new MessageInformation() { content = "竟贯穿了" });
-            newMessages.result.Add(new MessageInformation() { content = "一生" });
+            //防止网络错误，直接调用本次调用
+            try
+            {
+                //todo 这里调用自己的服务器的弹幕接口
+                //get请求调用服务接口
+                //string apiUrl = ConfigurationManager.AppSettings["apiUrl"];
+                //HttpClient client = new HttpClient();
+                //var result = await client.GetAsync(apiUrl);
+                //string content = await result.Content.ReadAsStringAsync();
+                ////最新的弹幕
+                //GetMessageInformationResult newMessages = JsonConvert.DeserializeObject<GetMessageInformationResult>(content);
+                GetMessageInformationResult newMessages = null;
+                if (newMessages == null)
+                {
+                    newMessages = new GetMessageInformationResult();
+                }
+                if (newMessages.result == null)
+                {
+                    newMessages.result = new List<MessageInformation>();
+                }
+                //测试用例
+                if (isDevelopMode)
+                {
+                    newMessages.result.Add(new MessageInformation() { nickName="Lulus",content = "你们的你们的你们的你们的你们的" });
+                    newMessages.result.Add(new MessageInformation() { nickName = "无尽的梦", content = "生活" });
+                    newMessages.result.Add(new MessageInformation() { content = "真丰富真丰富真丰富真丰富真丰富真丰富" });
+                    newMessages.result.Add(new MessageInformation() { nickName = "SevenS", content = "不像我不像我不像我不像我" });
+                    newMessages.result.Add(new MessageInformation() { content = "帅" });
+                    newMessages.result.Add(new MessageInformation() { nickName = "钢铁战士", content = "字" });
+                    newMessages.result.Add(new MessageInformation() { content = "表现了表现了表现了表现了表现了表现了表现了表现了表现了表现了表现了表现了表现了表现了表现了表现了表现了" });
+                    newMessages.result.Add(new MessageInformation() { content = "一生" });
+                    newMessages.result.Add(new MessageInformation() { nickName = "勿忘心安. گق", content = "你们的你们的你们的你们的你们的" });
+                    newMessages.result.Add(new MessageInformation() { content = "生活" });
+                    newMessages.result.Add(new MessageInformation() { nickName = "Garrie", content = "真丰富真丰富真丰富真丰富真丰富真丰富" });
+                    newMessages.result.Add(new MessageInformation() { content = "不像我不像我不像我不像我" });
+                    newMessages.result.Add(new MessageInformation() { content = "帅" });
+                    newMessages.result.Add(new MessageInformation() { nickName = "远轩微", content = "字" });
+                    newMessages.result.Add(new MessageInformation() { content = "表现了表现了表现了表现了表现了表现了表现了表现了表现了表现了表现了表现了表现了表现了表现了表现了表现了" });
+                    newMessages.result.Add(new MessageInformation() { content = "一生" });
+                    newMessages.result.Add(new MessageInformation() { content = "你们的你们的你们的你们的你们的" });
+                    newMessages.result.Add(new MessageInformation() { content = "生活" });
+                    newMessages.result.Add(new MessageInformation() { content = "真丰富真丰富真丰富真丰富真丰富真丰富" });
+                    newMessages.result.Add(new MessageInformation() { content = "不像我不像我不像我不像我" });
+                    newMessages.result.Add(new MessageInformation() { content = "帅" });
+                    newMessages.result.Add(new MessageInformation() { content = "字" });
+                    newMessages.result.Add(new MessageInformation() { content = "表现了表现了表现了表现了表现了表现了表现了表现了表现了表现了表现了表现了表现了表现了表现了表现了表现了" });
+                    newMessages.result.Add(new MessageInformation() { content = "一生" });
+                    newMessages.result.Add(new MessageInformation() { content = "你们的你们的你们的你们的你们的" });
+                    newMessages.result.Add(new MessageInformation() { content = "生活" });
+                    newMessages.result.Add(new MessageInformation() { content = "真丰富真丰富真丰富真丰富真丰富真丰富" });
+                    newMessages.result.Add(new MessageInformation() { content = "不像我不像我不像我不像我" });
+                    newMessages.result.Add(new MessageInformation() { content = "帅" });
+                    newMessages.result.Add(new MessageInformation() { content = "字" });
+                    newMessages.result.Add(new MessageInformation() { content = "表现了表现了表现了表现了表现了表现了表现了表现了表现了表现了表现了表现了表现了表现了表现了表现了表现了" });
+                    newMessages.result.Add(new MessageInformation() { content = "一生" });
+                }
 
-            messages.AddRange(newMessages.result);
+
+                messages.AddRange(newMessages.result);
+            }
+            catch (Exception ex)
+            {
+
+            }
+
         }
 
         /// <summary>
@@ -207,11 +289,19 @@ namespace BarrageDemo
                 double inittop = GetHeight(locations[i]);
                 //获取速度随机数
                 //double randomspeed = random.NextDouble();
-                double initspeed = 30;
+                //设置完成动画的时间
                 //实例化TextBlock和设置基本属性,并添加到Canvas中
                 TextBlock textblock = new TextBlock();
-                textblock.Text = contentlist[i].content;
-                textblock.FontSize = 20;
+                //加上昵称显示
+                if (!string.IsNullOrEmpty(contentlist[i].nickName))
+                {
+                    textblock.Text = $"{contentlist[i].nickName}:{contentlist[i].content}";
+                }
+                else
+                {
+                    textblock.Text = contentlist[i].content;
+                }
+                textblock.FontSize = fontSize;
                 textblock.Foreground = GetRandomColor();
                 //记录该行的未显示字幕数
                 lengthList[locations[i]] = lengthList[locations[i]] + contentlist[i].content.Length;
@@ -221,10 +311,10 @@ namespace BarrageDemo
                 //实例化动画
                 DoubleAnimation animation = new DoubleAnimation();
                 Timeline.SetDesiredFrameRate(animation, 60);  //如果有性能问题,这里可以设置帧数
-                                                              //从右往左
+                //从右往左
                 animation.From = canvas.ActualWidth;
                 animation.To = 0;
-                animation.Duration = TimeSpan.FromSeconds(initspeed);
+                animation.Duration = TimeSpan.FromSeconds(initFinishTime);
                 animation.AutoReverse = false;
                 animation.Completed += (object sender, EventArgs e) =>
                 {
@@ -253,23 +343,24 @@ namespace BarrageDemo
         /// <returns></returns>
         private double GetHeight(int index)
         {
-            return heightList[index % 3];
+            decimal target = heightList[index % rowCount];
+            return double.Parse(target.ToString());
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             //计算三排的起始高度
-            heightList = new List<double>();
-            double height = canvas.ActualHeight;
+            heightList = new List<decimal>();
+            decimal height = decimal.Parse(canvas.ActualHeight.ToString());
             heightList.Add(0);
-            //三分之一高
-            double threeHeight = height / rowCount;
+            //rowCount分之一高
+            decimal threeHeight = height / rowCount;
             for (int i = 1; i < rowCount; i++)
             {
                 heightList.Add(threeHeight * i);
             }
 
-            lengthList = new List<double>(rowCount);
+            lengthList = new List<decimal>(rowCount);
             for (int i = 0; i < rowCount; i++)
             {
                 lengthList.Add(0);
@@ -284,6 +375,14 @@ namespace BarrageDemo
             timer.Interval = new TimeSpan(0, 0, 1);   //时间间隔
             timer.Tick += new EventHandler(ShowMessage);
             timer.Start();
+        }
+
+        private void hahaWindow_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            base.OnMouseLeftButtonDown(e);
+
+            // Begin dragging the window
+            this.DragMove();
         }
     }
 }

@@ -9,5 +9,9 @@ namespace LTM.WeiXin.WPF.Models
     public class MessageInformation
     {
         public string content { get; set; }
+        /// <summary>
+        /// 昵称
+        /// </summary>
+        public string nickName { get; set; }
     }
 }
