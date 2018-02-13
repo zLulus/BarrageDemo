@@ -1,0 +1,39 @@
+﻿@{ 
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SignalR实现的弹幕效果</title>
+    <meta charset="utf-8" />
+    <link href="~/Views/Barrage/css/Index.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+    <a href="#" id="click_screen">点击弹幕</a>
+    <!--screen start-->
+    <div class="screen">
+        <!--s_dm start-->
+        <div class="s_dm">
+            <a href="#" class="s_close">退出弹幕</a>
+            <div class="mask"></div>
+            <div class="s_show"></div>
+        </div>
+        <!--end s_dm-->
+        <!--send start-->
+        <div class="send">
+            <div class="s_con">
+                <input type="text" class="s_userName" placeholder="用户名" />
+                <input type="text" class="s_txt" placeholder="评论" /><input type="button" class="s_btn" value="发表评论" />
+            </div>
+        </div>
+        <!--end send-->
+    </div>
+    <!--end screen-->
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <!--引用Microsoft.AspNet.SignalR后自动添加-->
+    <script src="~/Scripts/jquery.signalR-2.2.2.min.js"></script>
+    <script src="~/Views/Barrage/js/Index.js"></script>
+</body>
+</html>
+

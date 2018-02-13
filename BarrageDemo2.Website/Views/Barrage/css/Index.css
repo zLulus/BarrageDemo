@@ -1,0 +1,141 @@
+﻿/*css代码参考自http://www.zyfun.cn/2015/04/81/*/
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: #09c;
+    font-size: 12px;
+    font-family: "微软雅黑";
+}
+/*screen start*/
+#click_screen {
+    width: 100px;
+    height: 40px;
+    display: block;
+    border: 0;
+    text-align: center;
+    line-height: 40px;
+    text-decoration: none;
+    font-size: 21px;
+    color: #fff;
+    font-family: "微软雅黑";
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}
+
+.screen {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: none;
+}
+
+    .screen .s_dm {
+    }
+
+        .screen .s_dm .s_close {
+            width: 100px;
+            height: 40px;
+            display: block;
+            border: 0;
+            text-align: center;
+            line-height: 40px;
+            text-decoration: none;
+            font-size: 21px;
+            color: #c0c0c0;
+            font-family: "微软雅黑";
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 3;
+        }
+
+            .screen .s_dm .s_close:hover {
+                color: #fff;
+            }
+
+        .screen .s_dm .s_show {
+            position: relative;
+            z-index: 2;
+        }
+
+            .screen .s_dm .s_show div {
+                line-height: 36px;
+                font-size: 24px;
+                font-weight: bold;
+                position: absolute;
+                top: 0;
+                left: 0;
+            }
+
+    .screen .send {
+        width: 100%;
+        height: 80px;
+        background: #000;
+        position: absolute;
+        bottom: 0;
+        z-index: 2;
+    }
+
+        .screen .send .s_con {
+            width: 100%;
+            height: 80px;
+            text-align: center;
+            line-height: 80px;
+        }
+
+            .screen .send .s_con .s_txt {
+                width: 700px;
+                height: 40px;
+                border: 0;
+                font-size: 18px;
+                font-family: "微软雅黑";
+                padding-left: 12px;
+                border-radius: 3px 0 0 3px;
+                outline: none;
+            }
+
+            .screen .send .s_con .s_userName {
+                width: 100px;
+                height: 40px;
+                border: 0;
+                font-size: 18px;
+                font-family: "微软雅黑";
+                border-radius: 3px 0 0 3px;
+                outline: none;
+            }
+
+            .screen .send .s_con .s_btn {
+                width: 100px;
+                height: 40px;
+                background: #088;
+                border: 0;
+                font-size: 18px;
+                font-family: "微软雅黑";
+                color: #fff;
+                cursor: pointer;
+                border-radius: 0 3px 3px 0;
+                outline: none;
+            }
+
+                .screen .send .s_con .s_btn:hover {
+                    background: #006c6c;
+                }
+
+    .screen .s_dm .mask {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background: #000;
+        opacity: 0.5;
+        filter: alpha(opacity=50);
+        z-index: 1;
+    }
+/*end screen*/
