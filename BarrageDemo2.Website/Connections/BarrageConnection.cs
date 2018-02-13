@@ -11,6 +11,7 @@ namespace BarrageDemo2.Website.Connections
     {
         protected override Task OnReceived(IRequest request, string connectionId, string data)
         {
+            //在这里可以做自己的业务处理，比如把弹幕存进redis等等
             return Connection.Broadcast(data, connectionId);
         }
     }
